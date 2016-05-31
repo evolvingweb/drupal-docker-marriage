@@ -6,7 +6,7 @@
  */
 
 /**
- * Menu specific implementation of hook_node_prepare().
+ * Implements hook_node_prepare().
  *
  * Translates the menu item shown on node edit forms if the node language does
  * not equal the language of the menu item. This means either loading the
@@ -40,7 +40,7 @@ function entity_translation_i18n_menu_module_implements_alter(&$implementations,
 }
 
 /**
- * Menu specific implementation of hook_node_presave().
+ * Implements hook_node_presave().
  */
 function entity_translation_i18n_menu_node_presave($node) {
   if (!entity_translation_enabled('node')) {
@@ -58,11 +58,10 @@ function entity_translation_i18n_menu_node_presave($node) {
     return;
   }
 
-  // If we change from menu localization to translation sets while working on
-  // a translation (i.e. not the source node), then leave the source menu item
-  // intact and create a new one.
+  // When creating a new translation, leave the source menu item intact and
+  // create a new one.
   $langcode = entity_language('node', $node);
-  if (!empty($node->menu) && $tset && $node->menu['language'] == LANGUAGE_NONE && !empty($source_langcode)) {
+  if (!empty($node->menu) && $tset && !empty($source_langcode)) {
     $node->source_menu = menu_link_load($node->menu['mlid']);
     unset($node->menu['mlid']);
   }
@@ -95,7 +94,7 @@ function entity_translation_i18n_menu_form_menu_edit_item_alter(&$form, &$form_s
 }
 
 /**
- * Menu specific implementation of hook_menu_link_alter().
+ * Implements hook_menu_link_alter().
  */
 function entity_translation_i18n_menu_menu_link_alter(&$link) {
   if (!empty($link['mlid']) && !empty($link['entity_language']) && $link['language'] == LANGUAGE_NONE && entity_translation_i18n_menu_item($link)) {
@@ -134,7 +133,7 @@ function entity_translation_i18n_menu_menu_link_alter(&$link) {
 }
 
 /**
- * Menu specific implementation of hook_menu_link_update().
+ * Implements hook_menu_link_update().
  */
 function entity_translation_i18n_menu_menu_link_update($link) {
   // Make sure localizations are saved properly.
@@ -262,12 +261,17 @@ function entity_translation_i18n_menu_item($item) {
  * @param $node
  *   A node object, with a menu item ($node->menu).
  * @param $langcode
- *   The language into which the menu item should be translates.
+ *   The language into which the menu item should be translated.
  */
 function entity_translation_i18n_menu_node_menu_item_translate($node, $langcode) {
   // Localization.
   if ($node->menu['language'] == LANGUAGE_NONE) {
     _i18n_menu_link_localize($node->menu, $langcode);
+    // Update properties 'link_title' and 'options.attributes.title' which are
+    // used for the node menu form; i18n_menu_link_localize only localizes
+    // rendered properties 'title' and 'localized_options.attributes.title'.
+    $node->menu['link_title'] = $node->menu['title'];
+    $node->menu['options']['attributes']['title'] = isset($node->menu['localized_options']['attributes']['title']) ? $node->menu['localized_options']['attributes']['title'] : '';
   }
   // Translation sets.
   else {
@@ -279,6 +283,12 @@ function entity_translation_i18n_menu_node_menu_item_translate($node, $langcode)
       // Set parent_depth_limit (required on node forms).
       if (!empty($menu) && !isset($menu['parent_depth_limit'])) {
         $menu['parent_depth_limit'] = _menu_parent_depth_limit($menu);
+      }
+
+      // Make sure the menu item is not set to hidden; i18n_menu automatically
+      // hides any menu items not matching the current interface language.
+      if (!empty($menu)) {
+        $menu['hidden'] = FALSE;
       }
     }
 
@@ -359,6 +369,11 @@ function entity_translation_i18n_menu_entity_translation_upgrade($node, $transla
  * Implements hook_entity_translation_delete().
  */
 function entity_translation_i18n_menu_entity_translation_delete($entity_type, $entity, $langcode) {
+  // Make sure that we are working with an entity of type node.
+  if ($entity_type != 'node') {
+    return;
+  }
+
   list($entity_id, , ) = entity_extract_ids($entity_type, $entity);
 
   // Clean-up all menu module links that point to this node.

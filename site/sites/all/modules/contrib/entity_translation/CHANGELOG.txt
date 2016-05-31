@@ -1,14 +1,117 @@
 
-Entity translation 7.x-1.x, xxxx-xx-xx
+Entity Translation 7.x-1.x, xxxx-xx-xx
 --------------------------------------
 
 
-Entity translation 7.x-1.0-beta2, 2012-11-21
+Entity Translation 7.x-1.0-beta4, 2015-01-23
+--------------------------------------------
+#2396103 by plach: Fixed [DATA LOSS] Translations deleted.
+#2218087 by plach: Fixed PHP Fatal error: Unsupported operand types in
+  modules/field_ui/field_ui.admin.inc on line 477.
+#2396653 by SchnWalter, mongolito404: Fix validation handler for the entity
+  language widget.
+#2395327 by damiankloip: FATAL error when requesting an edit path for a
+  non-existent entity.
+#2342787 by jcisio: Language widget submit handler runs on disabled entity
+  types.
+#2389945 by rafal.enden: Tests don't pass when using different source than
+  original node language.
+#2185523 by leon.nk: Document that entity_translation_enabled_bundle() does not
+  check whether the entity type is translatable.
+#2378195 by Johnny vd Laar: Node edit notice when author of a translation is
+  deleted.
+#2382713 by seanr: entity_translation_update_7006 fails because of SQL error
+  before variable_set('entity_translation_revision_enabled', FALSE); can run.
+#1046282 by plach, good_man, miro_dietiker, Gábor Hojtsy: Make the module work
+  with revisions.
+#2179183 by dkingofpa, Jānis Bebrītis | SocialNicheGuru: Fixed Fatal error:
+  Unsupported operand types in /entity_translation.module on line 188.
+#1605406 by joelrosen, Jose Reyero, paulihuhtiniemi, guillaumev | mindaugasd:
+  Exposed translated field content to Views so that multiple language
+  translations can be shown simultaneously.
+#2160559 by w3wfr: Warning because of empty value line 675.
+#2151503 by SebCorbin: Check for translation access for Add links.
+#2130091 by peximo: Media edit dialog integration bug.
+#2065221 by catch, plach: Fixed Static cache for handlers should key by $vid.
+#1516202 by fabsor, spotzero: Added a CTools access plugin for checking if a
+  translation is available.
+#2027513 by GaëlG, jcisio: Added support for nested values for 'edit form' in
+  hook_entity_info().
+#2073231 by plach: Rename entity_translation_form_language() to
+  entity_translation_get_existing_language().
+#2072865 by douggreen: Fixed Only replace 'delete' button with
+  'delete translation', don't add one that doesn't exist.
+#1865244 by plach | bojanz, agoradesign, ciss, interdruper, joel_osc: Added
+  support for multiple translation handlers on the same form.
+#2055491 by plach: Fixed Synced image fields cannot be emptied.
+#1866076 by grndlvl: Added support for non-entity load tokens when declaring
+  translations.
+
+
+Entity Translation 7.x-1.0-beta3, 2013-07-23
+--------------------------------------------
+#2037789 by Jelle_S: Fixed Default to user_access() access callback like drupal
+  menu does.
+#1982140 by bforchhammer | carligraph: Fixed Menu item is deleted when adding a
+  third translation.
+#2000926 by GiorgosK, bforchhammer: Fixed entity_translation_i18n_menu should
+  check if entity is node before deleting menu links.
+#1991452 by twistor: Fixed Strict warnings on testing page.
+#1992588 by bforchhammer: Fixed PHP notices on node page (menu-related).
+#1979406 by milesw: Field values for node translations not filled correctly when
+  making a field translatable.
+#1969366 by plach | EdNet: Fixed unsupported operand types in
+  entity_translation().module line 951 - Unable to clear cache, run cron,
+  etc from drush or aegir.
+#1970246 by jweowu: Fixed entity_translation_upgrade() doesn't flush the entity
+  load cache.
+#1959614 by plach | rutcreate: Fixed Image is deleted by saving node 5 times.
+#1941080 by plopesc, bforchhammer: Fixed Menu translation on node form is
+  broken.
+#1937242 by eliosh: Use custom theme function for node translation overview.
+#1916738 by alberto56, plach: Added Make it more obvious to those new to the
+  concept of field translation that all instances of the field are translatable.
+#1942732 by OnkelTem: Fixed WSOD when LEFT JOIN'ing entities' translations.
+#1942712 by das-peter: Fixed Non wrapped entity passed to Rules.
+#1907456 by leon.nk: Added Allow bulk field updates to copy data for all
+  translations.
+#1947764 by plach: Improve bundle translatability checks.
+#1370900 by mojzis, plach | mgladding: Fixed Fatal Error: Cannot access empty
+  property in translation.handler.inc.
+#1924088 by plach | drzraf: Fixed Wrong form 'language' value in case of
+  content-translation enabled bundles.
+#1933742 by das-peter: Fixed Delete translation doesn't flush the entity cache.
+#1903024 by fabsor | dimitrileonidas: Fixed SQL error in Views when adding an
+  entity translation relationship that is not using the base entity of the view.
+#1890346 by plach: Fixed Entity language change not handled on non-translatable
+  entities with translatable fields.
+#1883584 by grndlvl: Added Allow for link 'destination' on overview page.
+#1888324 by plach: Fixed Wrong form language set when only one language is
+  enabled and the entity has LANGUAGE_NONE language.
+#1888192 by plach: Fixed Field widgets hidden when no #access key is defined.
+#1885370 by grndlvl: Fixed 'View' title blank on translation overview when using
+  optional title replacement field.
+#1881872 by plach | Demoshane: Added an explict dependecy on Drupal core 7.15.
+#1876750 by David_Rothstein: Fixed Fatal error when creating an entity as an
+  anonymous user.
+#1760270 by plach | Berdir: Fixed Comment translation broken?.
+#1870236 by plach: Fixed Field translatability migration fails when translation
+  for the entity type is disabled.
+#1865176 by bforchhammer: Implement hook_entity_translation_delete() on behalf
+  of path module.
+#1862882 by Cottser: Fixed Typo: accross = across.
+#1851118 by peximo | impleri: Fixed Incorrect ET Handler set in node/add form
+  when inserting new taxonomy term.
+#1842540 by peximo, bforchhammer | plach: Added Pathauto core entity types
+  integration.
+
+
+Entity Translation 7.x-1.0-beta2, 2012-11-21
 --------------------------------------------
 #1846104 by David_Rothstein, plach: Fixed Entity Translation shouldn't assume
   $form['#entity_type()'] is a string.
 #1845896 by plach, peximo: Fixed Validate translation authoring info on submit.
-#1835578 by farse, plach: Fixed Entity translation metadata should be stored
+#1835578 by farse, plach: Fixed Entity Translation metadata should be stored
   only if the entity bundle is translatable.
 #1437976 by plach | Wolfgang Reszel: Fixed Invalid node translation menu
   callback set when entity translation for nodes is disabled.
@@ -23,7 +126,7 @@ Entity translation 7.x-1.0-beta2, 2012-11-21
   constraint violation: 1048 Column 'module' cannot be null'.
 
 
-Entity translation 7.x-1.0-beta1, 2012-11-02
+Entity Translation 7.x-1.0-beta1, 2012-11-02
 --------------------------------------------
 #1828794 by plach: Make translation workflow permissions optional.
 #1829666 by bforchhammer: Fixed Fatal error caused by menu translation when node
@@ -44,7 +147,7 @@ Entity translation 7.x-1.0-beta1, 2012-11-02
   language.
 #1770748 by bforchhammer, plach: Option to display shared fields only when
   editing the original values.
-#1811672 by joelrosen: Fixed Entity translation stuff showing on content types
+#1811672 by joelrosen: Fixed Entity Translation stuff showing on content types
   with multilingual support disabled.
 #1810322 by Dave Reid: Fixed Fatal error when using the translate link field
   handler in Views.
@@ -129,7 +232,7 @@ Entity translation 7.x-1.0-beta1, 2012-11-02
   form in favor of a language-aware edit form.
 
 
-Entity translation 7.x-1.0-alpha2, 2012-06-16
+Entity Translation 7.x-1.0-alpha2, 2012-06-16
 ---------------------------------------------
 #1587108 by plach | divined: Error: The entities of type Taxonomy term do not
   define a valid base path: it will not be possible to translate them.
@@ -143,7 +246,7 @@ Entity translation 7.x-1.0-alpha2, 2012-06-16
   update.
 #1519906 by plach: Migrate aliases when upgrading nodes.
 #1519898 by plach: Fixed The upgrade process may freeze.
-#1519894 by plach: Fixed Entity translation upgrade migration incomplete.
+#1519894 by plach: Fixed Entity Translation upgrade migration incomplete.
 #1432206 by bforchhammer: Fixed Loss of field content during translatability
   switch operation.
 #1279372 by getgood, loganfsmyth, evolvingweb, plach, Kristen Pol: Enable bulk
@@ -169,7 +272,7 @@ Entity translation 7.x-1.0-alpha2, 2012-06-16
   constraint violation.
 
 
-Entity translation 7.x-1.0-alpha1, 2011-09-07
+Entity Translation 7.x-1.0-alpha1, 2011-09-07
 ---------------------------------------------
 #1045196 by plach: Fixed Image field translation broken.
 #1003876 by plach: (follow-up) Fixed labels not replaced by Title.

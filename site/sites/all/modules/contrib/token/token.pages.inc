@@ -19,7 +19,12 @@ function theme_token_tree_link($variables) {
   }
 
   $info = token_theme();
-  $variables['options']['query']['options'] = array_intersect_key($variables, $info['token_tree']['variables']);
+  $tree_variables = array_intersect_key($variables, $info['token_tree']['variables']);
+  $tree_variables = drupal_array_diff_assoc_recursive($tree_variables, $info['token_tree']['variables']);
+  if (!isset($variables['options']['query']['options'])) {
+    $variables['options']['query']['options'] = array();
+  }
+  $variables['options']['query']['options'] += $tree_variables;
 
   // We should never pass the dialog option to theme_token_tree(). It is only
   // used for this function.
@@ -57,7 +62,7 @@ function token_page_output_tree() {
   $options['dialog'] = FALSE;
 
   $output = theme('token_tree', $options);
-  print '<html><head><title></title>' . drupal_get_css() . drupal_get_js() . '</head>';
+  print '<html><head>' . drupal_get_css() . drupal_get_js() . '</head>';
   print '<body class="token-tree">' . $output . '</body></html>';
   drupal_exit();
 }
@@ -231,7 +236,7 @@ function _token_clean_css_identifier($id) {
 /**
  * Menu callback; prints the available tokens and values for an object.
  */
-function token_devel_token_object($entity_type, $entity) {
+function token_devel_token_object($entity_type, $entity, $token_type = NULL) {
   $header = array(
     t('Token'),
     t('Value'),
@@ -243,7 +248,10 @@ function token_devel_token_object($entity_type, $entity) {
     'values' => TRUE,
     'data' => array($entity_type => $entity),
   );
-  $tree = token_build_tree($entity_type, $options);
+  if (!isset($token_type)) {
+    $token_type = $entity_type;
+  }
+  $tree = token_build_tree($token_type, $options);
   foreach ($tree as $token => $token_info) {
     if (!empty($token_info['restricted'])) {
       continue;

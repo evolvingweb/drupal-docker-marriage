@@ -48,7 +48,9 @@ class entity_translation_handler_field_label extends views_handler_field {
     $ids = array();
     $ids_by_type = array();
     foreach ($values as $row) {
-      $ids_by_type[$this->get_value($row, 'entity_type')][] = $this->get_value($row, 'entity_id');
+      if ($entity_type = $this->get_value($row, 'entity_type')) {
+        $ids_by_type[$entity_type][] = $this->get_value($row, 'entity_id');
+      }
     }
     foreach ($ids_by_type as $type => $ids) {
       $this->entities[$type] = entity_load($type, $ids);
@@ -58,6 +60,10 @@ class entity_translation_handler_field_label extends views_handler_field {
   function render($values) {
     $entity_type = $this->get_value($values, 'entity_type');
     $entity_id = $this->get_value($values, 'entity_id');
+    // Check if entity is not empty
+    if (!$entity_id || !$entity_type) {
+      return NULL;
+    }
     $entity = $this->entities[$entity_type][$entity_id];
     // We could also use entity_label(), but since this we might want to let
     // the handler decide what's best to show.

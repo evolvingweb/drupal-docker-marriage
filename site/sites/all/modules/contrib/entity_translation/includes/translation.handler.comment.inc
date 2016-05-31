@@ -25,6 +25,13 @@ class EntityTranslationCommentHandler extends EntityTranslationDefaultHandler {
   }
 
   /**
+   * @see EntityTranslationDefaultHandler::entityFormLanguageWidgetSubmit()
+   */
+  public function entityFormLanguageWidgetSubmit($form, &$form_state) {
+    $this->updateFormLanguage($form_state);
+  }
+
+  /**
    * @see EntityTranslationDefaultHandler::entityFormTitle()
    */
   protected function entityFormTitle() {

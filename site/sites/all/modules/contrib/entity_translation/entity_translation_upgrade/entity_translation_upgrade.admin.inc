@@ -177,6 +177,9 @@ function entity_translation_upgrade_do($types, &$context) {
       }
 
       $query->execute();
+
+      // Flush the modified nodes from the entity load cache.
+      entity_get_controller('node')->resetCache($nids);
     }
 
     $context['finished'] = $context['sandbox']['count'] / $context['sandbox']['total'];
@@ -191,12 +194,14 @@ function entity_translation_upgrade_do($types, &$context) {
  * Removes the translation sets for all the upgraded nodes.
  */
 function entity_translation_upgrade_complete(&$context) {
-  // Remove translation sets for migrated nodes.
-  db_query('UPDATE {node} SET tnid = 0 WHERE nid IN (SELECT DISTINCT etuh.tnid FROM {entity_translation_upgrade_history} etuh WHERE etuh.complete = 0)');
-  // Mark nodes as migrated.
-  db_query('UPDATE {entity_translation_upgrade_history} SET complete = 1 WHERE complete = 0');
+  if ($nids = db_query('SELECT DISTINCT etuh.tnid FROM {entity_translation_upgrade_history} etuh WHERE etuh.complete = 0')->fetchCol()) {
+    // Remove translation sets for migrated nodes.
+    db_query('UPDATE {node} SET tnid = 0 WHERE nid IN (:nids)', array(':nids' => $nids));
+    entity_get_controller('node')->resetCache($nids);
+    // Mark nodes as migrated.
+    db_query('UPDATE {entity_translation_upgrade_history} SET complete = 1 WHERE complete = 0');
+  }
 }
-
 
 /**
  * Implementations of hook_entity_translation_upgrade() on behalf of core

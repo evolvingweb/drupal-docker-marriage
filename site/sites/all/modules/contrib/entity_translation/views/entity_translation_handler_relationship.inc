@@ -17,6 +17,7 @@ class entity_translation_handler_relationship extends views_handler_relationship
     $def = $this->definition;
     $def['table'] = 'entity_translation';
     $def['field'] = 'entity_id';
+    $def['left_table'] = $this->table_alias;
     $def['type'] = empty($this->options['required']) ? 'LEFT' : 'INNER';
     $join = new views_join();
     $join->definition = $def;

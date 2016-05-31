@@ -30,6 +30,8 @@ class Entity {
   protected $entityType;
   protected $entityInfo;
   protected $idKey, $nameKey, $statusKey;
+  protected $defaultLabel = FALSE;
+  protected $wrapper;
 
   /**
    * Creates a new entity.
@@ -55,7 +57,7 @@ class Entity {
     $this->entityInfo = entity_get_info($this->entityType);
     $this->idKey = $this->entityInfo['entity keys']['id'];
     $this->nameKey = isset($this->entityInfo['entity keys']['name']) ? $this->entityInfo['entity keys']['name'] : $this->idKey;
-    $this->statusKey = empty($info['entity keys']['status']) ? 'status' : $info['entity keys']['status'];
+    $this->statusKey = empty($this->entityInfo['entity keys']['status']) ? 'status' : $this->entityInfo['entity keys']['status'];
   }
 
   /**
@@ -111,6 +113,23 @@ class Entity {
   }
 
   /**
+   * Returns the EntityMetadataWrapper of the entity.
+   *
+   * @return EntityDrupalWrapper
+   *   An EntityMetadataWrapper containing the entity.
+   */
+  public function wrapper() {
+    if (empty($this->wrapper)) {
+      $this->wrapper = entity_metadata_wrapper($this->entityType, $this);
+    }
+    elseif ($this->wrapper->value() !== $this) {
+      // Wrapper has been modified outside, so let's better create a new one.
+      $this->wrapper = entity_metadata_wrapper($this->entityType, $this);
+    }
+    return $this->wrapper;
+  }
+
+  /**
    * Returns the label of the entity.
    *
    * Modules may alter the label by specifying another 'label callback' using
@@ -119,10 +138,18 @@ class Entity {
    * @see entity_label()
    */
   public function label() {
-    if (isset($this->entityInfo['label callback']) && $this->entityInfo['label callback'] == 'entity_class_label') {
+    // If the default label flag is enabled, this is being invoked recursively.
+    // In this case we need to use our default label callback directly. This may
+    // happen if a module provides a label callback implementation different
+    // from ours, but then invokes Entity::label() or entity_class_label() from
+    // there.
+    if ($this->defaultLabel || (isset($this->entityInfo['label callback']) && $this->entityInfo['label callback'] == 'entity_class_label')) {
       return $this->defaultLabel();
     }
-    return entity_label($this->entityType, $this);
+    $this->defaultLabel = TRUE;
+    $label = entity_label($this->entityType, $this);
+    $this->defaultLabel = FALSE;
+    return $label;
   }
 
   /**
@@ -253,7 +280,8 @@ class Entity {
    */
   public function getTranslation($property, $langcode = NULL) {
     $all_info = entity_get_all_property_info($this->entityType);
-    $property_info = $all_info[$property];
+    // Assign by reference to avoid triggering notices if metadata is missing.
+    $property_info = &$all_info[$property];
 
     if (!empty($property_info['translatable'])) {
       if (!empty($property_info['field'])) {
